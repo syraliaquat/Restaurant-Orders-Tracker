@@ -1,0 +1,37 @@
+-- What is menu_item_details for Asian dishes sort details so that expensive dishes come first.
+SELECT * 
+from Menu_items
+    WHERE Category ='Asian'
+       ORDER BY price DESC; 
+
+-- How many no.of dishes  are in each category
+SELECT category ,
+          COUNT(menu_item_id) AS num_items FROM menu_items
+    GROUP BY Category;
+
+-- How many no. of purchases are for each dish sort the result by no. of purchases
+SELECT item_name ,  
+       COUNT(DISTINCT Order_details_id ) AS num_purchases
+            FROM Order_details as od 
+                 LEFT JOIN Menu_items as mi on od.item_id =mi.menu_item_id 
+GROUP BY item_name
+   ORDER BY num_purchases;
+
+-- what is duration in which purchases occur.
+SELECT MIN(order_date) as Starting_date, 
+            MAX(order_date) AS Ending_date  FROM Order_details ;
+
+-- Total purcase bill by each order_id
+SELECT order_id , 
+      SUM(price) AS Total
+         FROM Order_details AS od
+           JOIN menu_items AS mi ON od.item_id=mi.menu_item_id 
+      GROUP BY order_id ;
+
+-- How many people buy more than 10 items 
+SELECT COUNT(*) AS count_of_orders 
+        FROM (SELECT order_id ,
+             COUNT(item_id) AS num_items 
+       FROM order_details 
+   GROUP BY order_id
+HAVING num_items > 10 )  as num_orders ;
